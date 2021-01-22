@@ -22,7 +22,8 @@ namespace rift.interfaces.Repository
 
         // Add && Update
         Task<T> SaveAsync(T entity);
-        Task<T> SaveAsync(T entity, object[] attachments);
+        Task<T> SaveAsync(T entity, params object[] attachments);
+        Task<T> UpdateAsync(T entity);
 
         // Delete
         Task<T> DeleteAsync(T entity);

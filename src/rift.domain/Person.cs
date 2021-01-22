@@ -14,6 +14,7 @@ namespace rift.domain
         public DateTime BirthDate { get; set; }
         public string Document { get; set; }
         public IList<Email> Emails { get; set; }
+        public IList<Phone> Phones { get; set; }
         public Address Address { get; set; }
 
         public Person() : base() { }

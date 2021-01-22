@@ -22,10 +22,10 @@ namespace rift.web.Controllers
         public Person Get(string cpf, string name, string document)
         {
             var person = _peopleRepository.FindByAsync(
-              new string[] { "Emails", "Address" },
-              x => !string.IsNullOrEmpty(cpf) && x.CPF.Contains(cpf),
-              x => !string.IsNullOrEmpty(name) && x.Name.Contains(name),
-              x => !string.IsNullOrEmpty(document) && x.Document.Contains(document))
+              new string[] { "Emails", "Address", "Phones" },
+              x => !string.IsNullOrEmpty(cpf) && x.CPF.ToLower().Contains(cpf.ToLower()),
+              x => !string.IsNullOrEmpty(name) && x.Name.ToLower().Contains(name.ToLower()),
+              x => !string.IsNullOrEmpty(document) && x.Document.ToLower().Contains(document.ToLower()))
               .Result;
 
             return person;
@@ -34,13 +34,13 @@ namespace rift.web.Controllers
         [HttpGet("{id}")]
         public Person GetOne(int id)
         {
-            return _peopleRepository.FindByIdAsync(id, "Emails", "Address").Result;
+            return _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones").Result;
         }
 
         [HttpGet()]
         public List<Person> GetPeople()
         {
-            return _peopleRepository.FindManyAsync("Emails", "Address").Result.ToList();
+            return _peopleRepository.FindManyAsync("Emails", "Address", "Phones").Result.ToList();
         }
 
         [HttpPost]
@@ -52,13 +52,13 @@ namespace rift.web.Controllers
         [HttpPut]
         public Person Update(Person person)
         {
-            return _peopleRepository.SaveAsync(person).Result;
+            return _peopleRepository.UpdateAsync(person).Result;
         }
 
         [HttpDelete("{id}")]
         public Person Delete(int id)
         {
-            var person = _peopleRepository.FindByIdAsync(id, "Emails", "Address").Result;
+            var person = _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones").Result;
             return _peopleRepository.DeleteAsync(person).Result;
         }
     }

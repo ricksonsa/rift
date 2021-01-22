@@ -13,6 +13,7 @@ namespace rift.data.FakeData
                 .RuleFor(x => x.CPF, x => x.Random.String2(11))
                 .RuleFor(x => x.Id, x =>  x.Random.Int(0, 5000))
                 .RuleFor(x => x.Name, x => x.Person.FullName)
+                .RuleFor(x => x.Phones, x => new PhoneFake().GenerateList(x.Random.Int(0, 4)))
                 .RuleFor(x => x.Address, x => new AddressFake().Generate())
                 .RuleFor(x => x.BirthDate, x => x.Person.DateOfBirth);
 

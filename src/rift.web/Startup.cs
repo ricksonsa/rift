@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using rift.data;
 using rift.domain;
@@ -24,7 +25,10 @@ namespace rift.web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AcervoContext>(options => options.UseInMemoryDatabase("dbacervo"));
+            services.AddDbContext<AcervoContext>(options => {
+                options.UseInMemoryDatabase("dbacervo");
+                options.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+                });
 
             services.AddScoped<IRepository<Person>, Repository<Person>>();
             services.AddScoped<IRepository<Company>, Repository<Company>>();

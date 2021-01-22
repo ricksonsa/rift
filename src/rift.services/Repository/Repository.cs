@@ -119,6 +119,7 @@ namespace rift.services.Repository
 
         public async Task<T> SaveAsync(T entity)
         {
+            if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
 
             EntityEntry<T> entry;
             if (entity.Id == 0)
@@ -135,7 +136,8 @@ namespace rift.services.Repository
 
         public void Detach(T entity)
         {
-            
+            if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
+
             var local = _context.Set<T>()
                 .Local
                 .FirstOrDefault(entry => entry.Id.Equals(entity.Id));
@@ -146,9 +148,10 @@ namespace rift.services.Repository
             }
         }
 
-        public async Task<T> SaveAsync(T entity, object[] attachments)
+        public async Task<T> SaveAsync(T entity, params object[] attachments)
         {
-            
+            if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
+
             EntityEntry<T> entry;
             foreach (var attachment in attachments)
             {
@@ -164,6 +167,13 @@ namespace rift.services.Repository
             }
             await _context.SaveChangesAsync();
             return entry.Entity;
+        }
+
+        public async Task<T> UpdateAsync(T entity)
+        {
+            if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
+            await _context.SaveChangesAsync();
+            return entity;
         }
 
         public async Task<T> FindByAsync(string[] includes, params Expression<Func<T, bool>>[] criterias)
