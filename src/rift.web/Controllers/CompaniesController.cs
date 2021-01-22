@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using rift.domain;
 using rift.interfaces.Repository;
@@ -60,7 +59,7 @@ namespace rift.web.Controllers
         [HttpDelete("{id}")]
         public async Task<Company> Delete(int id)
         {
-            var company = _companiesRepository.FindByIdAsync(id, new string[] { "Phones", "Address", "Email" }).Result;
+            var company = _companiesRepository.FindByIdAsync(id, "Phones", "Address", "Email").Result;
             return await _companiesRepository.DeleteAsync(company);
         }
     }
