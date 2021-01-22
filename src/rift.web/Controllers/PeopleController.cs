@@ -37,7 +37,7 @@ namespace rift.web.Controllers
             return await _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones");
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<List<Person>> GetPeople()
         {
             return (await _peopleRepository.FindManyAsync("Emails", "Address", "Phones")).ToList();

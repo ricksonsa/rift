@@ -40,8 +40,7 @@ namespace rift.web.Controllers
         [HttpGet]
         public async Task<List<Company>> Get()
         {
-            var companies = (await _companiesRepository.FindManyAsync("Phones", "Address", "Email")).AsQueryable();
-            return companies.ToList();
+            return (await _companiesRepository.FindManyAsync("Phones", "Address", "Email")).ToList();
         }
 
         [HttpPost]
