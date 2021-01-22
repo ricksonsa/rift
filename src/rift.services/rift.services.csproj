@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\rift.domain\rift.domain.csproj" />
+    <ProjectReference Include="..\rift.interfaces\rift.interfaces.csproj" />
+    <ProjectReference Include="..\rift.data\rift.data.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Repository\" />
+  </ItemGroup>
+</Project>
