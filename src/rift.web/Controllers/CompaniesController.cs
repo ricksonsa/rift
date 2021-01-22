@@ -20,29 +20,28 @@ namespace rift.web.Controllers
         }
 
         [HttpGet("{id}")]
-        public Company GetOneById(int id)
+        public async Task<Company> GetOneById(int id)
         {
-            return _companiesRepository.FindByIdAsync(id, "Phones", "Address", "Email").Result;
+            return await _companiesRepository.FindByIdAsync(id, "Phones", "Address", "Email");
         }
 
 
         [HttpGet("search")]
-        public Company Get(string cnpj, string companyName, string fantasyName)
+        public async Task<Company> Get(string cnpj, string companyName, string fantasyName)
         {
-            var company = _companiesRepository.FindByAsync(
+            var company = await _companiesRepository.FindByAsync(
                 new string[] { "Phones", "Address", "Email" },
                 x => !string.IsNullOrEmpty(cnpj) && x.CNPJ.ToLower().Contains(cnpj.ToLower()),
                 x => !string.IsNullOrEmpty(fantasyName) && x.FantasyName.ToLower().Contains(fantasyName.ToLower()),
-                x => !string.IsNullOrEmpty(companyName) && x.CompanyName.ToLower().Contains(companyName.ToLower()))
-                .Result;
+                x => !string.IsNullOrEmpty(companyName) && x.CompanyName.ToLower().Contains(companyName.ToLower()));
 
             return company;
         }
 
         [HttpGet]
-        public List<Company> Get()
+        public async Task<List<Company>> Get()
         {
-            var companies = _companiesRepository.FindManyAsync("Phones", "Address", "Email").Result.AsQueryable();
+            var companies = (await _companiesRepository.FindManyAsync("Phones", "Address", "Email")).AsQueryable();
             return companies.ToList();
         }
 
@@ -53,16 +52,16 @@ namespace rift.web.Controllers
         }
 
         [HttpPut]
-        public Company Update(Company company)
+        public async Task<Company> Update(Company company)
         {
-            return _companiesRepository.UpdateAsync(company).Result;
+            return await _companiesRepository.UpdateAsync(company);
         }
 
         [HttpDelete("{id}")]
-        public Company Delete(int id)
+        public async Task<Company> Delete(int id)
         {
             var company = _companiesRepository.FindByIdAsync(id, new string[] { "Phones", "Address", "Email" }).Result;
-            return _companiesRepository.DeleteAsync(company).Result;
+            return await _companiesRepository.DeleteAsync(company);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace rift.services.Repository
 
         public async Task<T> DeleteAsync(T entity)
         {
+            if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
             var entry = _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
             return entry.Entity;
@@ -29,7 +30,6 @@ namespace rift.services.Repository
 
         public async Task<int> DeleteManyAsync(ICollection<T> entities)
         {
-
             _context.Set<T>().RemoveRange(entities);
             return await _context.SaveChangesAsync();
         }

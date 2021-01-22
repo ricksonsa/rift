@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using rift.domain;
 using rift.interfaces.Repository;
@@ -19,47 +20,46 @@ namespace rift.web.Controllers
         }
 
         [HttpGet("search")]
-        public Person Get(string cpf, string name, string document)
+        public async Task<Person> Get(string cpf, string name, string document)
         {
-            var person = _peopleRepository.FindByAsync(
+            var person = await _peopleRepository.FindByAsync(
               new string[] { "Emails", "Address", "Phones" },
               x => !string.IsNullOrEmpty(cpf) && x.CPF.ToLower().Contains(cpf.ToLower()),
               x => !string.IsNullOrEmpty(name) && x.Name.ToLower().Contains(name.ToLower()),
-              x => !string.IsNullOrEmpty(document) && x.Document.ToLower().Contains(document.ToLower()))
-              .Result;
+              x => !string.IsNullOrEmpty(document) && x.Document.ToLower().Contains(document.ToLower()));
 
             return person;
         }
 
         [HttpGet("{id}")]
-        public Person GetOne(int id)
+        public async Task<Person> GetOne(int id)
         {
-            return _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones").Result;
+            return await _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones");
         }
 
         [HttpGet()]
-        public List<Person> GetPeople()
+        public async Task<List<Person>> GetPeople()
         {
-            return _peopleRepository.FindManyAsync("Emails", "Address", "Phones").Result.ToList();
+            return (await _peopleRepository.FindManyAsync("Emails", "Address", "Phones")).ToList();
         }
 
         [HttpPost]
-        public Person Create(Person person)
+        public async Task<Person> Create(Person person)
         {
-            return _peopleRepository.SaveAsync(person).Result;
+            return await _peopleRepository.SaveAsync(person);
         }
 
         [HttpPut]
-        public Person Update(Person person)
+        public async Task<Person> Update(Person person)
         {
-            return _peopleRepository.UpdateAsync(person).Result;
+            return await _peopleRepository.UpdateAsync(person);
         }
 
         [HttpDelete("{id}")]
-        public Person Delete(int id)
+        public async Task<Person> Delete(int id)
         {
-            var person = _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones").Result;
-            return _peopleRepository.DeleteAsync(person).Result;
+            var person = await _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones");
+            return await _peopleRepository.DeleteAsync(person);
         }
     }
 }
