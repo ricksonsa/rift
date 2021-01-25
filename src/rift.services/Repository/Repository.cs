@@ -14,45 +14,45 @@ namespace rift.services.Repository
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         private readonly AcervoContext _context;
+        private readonly DbSet<T> _dbSet;
 
         public Repository(AcervoContext context)
         {
             _context = context;
+            _dbSet = context.Set<T>();
         }
 
-        public async Task<T> DeleteAsync(T entity)
+        public virtual async Task<T> DeleteAsync(T entity)
         {
             if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
-            var entry = _context.Set<T>().Remove(entity);
+            var entry = _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
             return entry.Entity;
         }
 
-        public async Task<int> DeleteManyAsync(ICollection<T> entities)
+        public virtual async Task<int> DeleteManyAsync(ICollection<T> entities)
         {
-            _context.Set<T>().RemoveRange(entities);
+            _dbSet.RemoveRange(entities);
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<T> FindByAsync(Expression<Func<T, bool>> criteria)
+        public virtual async Task<T> FindByAsync(Expression<Func<T, bool>> criteria)
         {
-            IQueryable<T> entityQuery = _context.Set<T>()
-                 .AsNoTracking();
-
+            IQueryable<T> entityQuery = _dbSet.AsNoTracking();
             return await entityQuery.Where(criteria).FirstOrDefaultAsync();
         }
 
-        public async Task<IList<T>> FindManyAsync(Expression<Func<T, bool>> criteria)
+        public virtual async Task<IList<T>> FindManyAsync(Expression<Func<T, bool>> criteria)
         {
-            IQueryable<T> entityQuery = _context.Set<T>()
+            IQueryable<T> entityQuery = _dbSet
                 .AsNoTracking();
 
             return await entityQuery.Where(criteria).ToListAsync();
         }
 
-        public async Task<T> FindByAsync(Expression<Func<T, bool>> criteria, params string[] includes)
+        public virtual async Task<T> FindByAsync(Expression<Func<T, bool>> criteria, params string[] includes)
         {
-            IQueryable<T> entityQuery = _context.Set<T>()
+            IQueryable<T> entityQuery = _dbSet
                   .AsNoTracking();
 
             foreach (var include in includes)
@@ -63,9 +63,9 @@ namespace rift.services.Repository
             return await entityQuery.Where(criteria).FirstOrDefaultAsync();
         }
 
-        public async Task<IList<T>> FindManyAsync(Expression<Func<T, bool>> criteria, params string[] includes)
+        public virtual async Task<IList<T>> FindManyAsync(Expression<Func<T, bool>> criteria, params string[] includes)
         {
-            IQueryable<T> entityQuery = _context.Set<T>()
+            IQueryable<T> entityQuery = _dbSet
                  .AsNoTracking();
 
             foreach (var include in includes)
@@ -76,10 +76,10 @@ namespace rift.services.Repository
             return await entityQuery.Where(criteria).ToListAsync();
         }
 
-        public async Task<IList<T>> FindManyAsync(params string[] includes)
+        public virtual async Task<IList<T>> FindManyAsync(params string[] includes)
         {
 
-            IQueryable<T> entityQuery = _context.Set<T>()
+            IQueryable<T> entityQuery = _dbSet
                  .AsNoTracking();
 
             foreach (var include in includes)
@@ -90,17 +90,17 @@ namespace rift.services.Repository
             return await entityQuery.ToListAsync();
         }
 
-        public async Task<T> FindByIdAsync(int id)
+        public virtual async Task<T> FindByIdAsync(int id)
         {
-            IQueryable<T> entityQuery = _context.Set<T>()
+            IQueryable<T> entityQuery = _dbSet
                 .AsNoTracking();
 
             return await entityQuery.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<T> FindByIdAsync(int id, params string[] includes)
+        public virtual async Task<T> FindByIdAsync(int id, params string[] includes)
         {
-            IQueryable<T> entityQuery = _context.Set<T>()
+            IQueryable<T> entityQuery = _dbSet
                 .AsNoTracking();
 
             foreach (var include in includes)
@@ -111,24 +111,24 @@ namespace rift.services.Repository
             return await entityQuery.Where(x => x.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<IList<T>> FindManyAsync()
+        public virtual async Task<IList<T>> FindManyAsync()
         {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
+            return await _dbSet.AsNoTracking().ToListAsync();
         }
 
 
-        public async Task<T> SaveAsync(T entity)
+        public virtual async Task<T> SaveAsync(T entity)
         {
             if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
 
             EntityEntry<T> entry;
             if (entity.Id == 0)
             {
-                entry = _context.Set<T>().Add(entity);
+                entry = _dbSet.Add(entity);
             }
             else
             {
-                entry = _context.Set<T>().Update(entity);
+                entry = _dbSet.Update(entity);
             }
             await _context.SaveChangesAsync();
             return entry.Entity;
@@ -138,7 +138,7 @@ namespace rift.services.Repository
         {
             if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
 
-            var local = _context.Set<T>()
+            var local = _dbSet
                 .Local
                 .FirstOrDefault(entry => entry.Id.Equals(entity.Id));
 
@@ -148,7 +148,7 @@ namespace rift.services.Repository
             }
         }
 
-        public async Task<T> SaveAsync(T entity, params object[] attachments)
+        public virtual async Task<T> SaveAsync(T entity, params object[] attachments)
         {
             if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
 
@@ -159,26 +159,26 @@ namespace rift.services.Repository
             }
             if (entity.Id == 0)
             {
-                entry = _context.Set<T>().Add(entity);
+                entry = _dbSet.Add(entity);
             }
             else
             {
-                entry = _context.Set<T>().Update(entity);
+                entry = _dbSet.Update(entity);
             }
             await _context.SaveChangesAsync();
             return entry.Entity;
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public virtual async Task<T> UpdateAsync(T entity)
         {
             if (entity == null) throw new ArgumentNullException(entity.GetType().ToString());
             await _context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<IList<T>> FindManyAsync(string[] includes, params Expression<Func<T, bool>>[] criterias)
+        public virtual async Task<IList<T>> FindManyAsync(string[] includes, params Expression<Func<T, bool>>[] criterias)
         {
-            IQueryable<T> entityQuery = _context.Set<T>()
+            IQueryable<T> entityQuery = _dbSet
                .AsNoTracking();
 
             foreach (var include in includes)
@@ -191,5 +191,11 @@ namespace rift.services.Repository
             }
             return await entityQuery.ToListAsync();
         }
+
+        public virtual async Task<bool> Exists(Expression<Func<T, bool>> criteria)
+        {
+            return await _dbSet.AnyAsync(criteria);
+        }
     }
+
 }

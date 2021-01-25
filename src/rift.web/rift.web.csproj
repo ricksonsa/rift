@@ -11,6 +11,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.2" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="5.1.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,8 +27,21 @@
     <ProjectReference Include="..\rift.services\rift.services.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
+    <ProjectReference Include="..\rift.dto\rift.dto.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Controllers\" />
+    <Folder Include="Rest\" />
+    <Folder Include="Rest\Utils\" />
+    <Folder Include="Rest\Filters\" />
+    <Folder Include="Rest\Problems\" />
+    <Folder Include="Rest\Extensions\" />
+    <Folder Include="Rest\Interfaces\" />
+    <Folder Include="Configuration\" />
+    <Folder Include="Configuration\AutoMapper\" />
+    <Folder Include="Crosscutting\" />
+    <Folder Include="Crosscutting\Exceptions\" />
   </ItemGroup>
 </Project>

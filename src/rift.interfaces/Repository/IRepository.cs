@@ -30,6 +30,7 @@ namespace rift.interfaces.Repository
         Task<int> DeleteManyAsync(ICollection<T> entities);
 
         // Helper
+        Task<bool> Exists(Expression<Func<T, bool>> criteria);
         void Detach(T entity);
     }
 }
