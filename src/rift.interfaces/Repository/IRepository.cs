@@ -13,12 +13,12 @@ namespace rift.interfaces.Repository
         Task<T> FindByIdAsync(int id, params string[] includes);
         Task<T> FindByAsync(Expression<Func<T, bool>> criteria);
         Task<T> FindByAsync(Expression<Func<T, bool>> criteria, params string[] includes);
-        Task<T> FindByAsync(string[] includes, params Expression<Func<T, bool>>[] criteria);
 
         Task<IList<T>> FindManyAsync();
         Task<IList<T>> FindManyAsync(params string[] includes);
         Task<IList<T>> FindManyAsync(Expression<Func<T, bool>> criteria);
         Task<IList<T>> FindManyAsync(Expression<Func<T, bool>> criteria, params string[] includes);
+        Task<IList<T>> FindManyAsync(string[] includes, params Expression<Func<T, bool>>[] criteria);
 
         // Add && Update
         Task<T> SaveAsync(T entity);

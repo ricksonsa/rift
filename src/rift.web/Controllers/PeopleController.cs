@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using rift.domain;
+using rift.domain.Models;
 using rift.interfaces.Repository;
 
 namespace rift.web.Controllers
@@ -19,47 +20,48 @@ namespace rift.web.Controllers
             _peopleRepository = peopleRepository;
         }
 
-        [HttpGet("search")]
-        public async Task<Person> Get(string cpf, string name, string document)
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(List<Person>))]
+        public async Task<IActionResult> Get([FromQuery] PersonSearchModel searchModel)
         {
-            var person = await _peopleRepository.FindByAsync(
+            var people = await _peopleRepository.FindManyAsync(
               new string[] { "Emails", "Address", "Phones" },
-              x => !string.IsNullOrEmpty(cpf) && x.CPF.ToLower().Contains(cpf.ToLower()),
-              x => !string.IsNullOrEmpty(name) && x.Name.ToLower().Contains(name.ToLower()),
-              x => !string.IsNullOrEmpty(document) && x.Document.ToLower().Contains(document.ToLower()));
+              searchModel.GetSearchExpressions());
 
-            return person;
+            return Ok(people);
         }
 
         [HttpGet("{id}")]
-        public async Task<Person> GetOne(int id)
+        [ProducesResponseType(200, Type = typeof(Person))]
+        public async Task<IActionResult> GetOne(int id)
         {
-            return await _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones");
-        }
-
-        [HttpGet]
-        public async Task<List<Person>> GetPeople()
-        {
-            return (await _peopleRepository.FindManyAsync("Emails", "Address", "Phones")).ToList();
+            return Ok(await _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones"));
         }
 
         [HttpPost]
-        public async Task<Person> Create(Person person)
+        [ProducesResponseType(200, Type = typeof(Person))]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Create(Person person)
         {
-            return await _peopleRepository.SaveAsync(person);
+            return Ok(await _peopleRepository.SaveAsync(person));
         }
 
         [HttpPut]
-        public async Task<Person> Update(Person person)
+        [ProducesResponseType(200, Type = typeof(Person))]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Update(Person person)
         {
-            return await _peopleRepository.UpdateAsync(person);
+            return Ok(await _peopleRepository.UpdateAsync(person));
         }
 
         [HttpDelete("{id}")]
-        public async Task<Person> Delete(int id)
+        [ProducesResponseType(200, Type = typeof(Person))]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
         {
             var person = await _peopleRepository.FindByIdAsync(id, "Emails", "Address", "Phones");
-            return await _peopleRepository.DeleteAsync(person);
+            if (person == null) return NotFound();
+            return Ok(await _peopleRepository.DeleteAsync(person));
         }
     }
 }

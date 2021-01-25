@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using rift.domain;
+using rift.domain.Models;
 using rift.interfaces.Repository;
 
 namespace rift.web.Controllers
@@ -19,47 +20,48 @@ namespace rift.web.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Company> GetOneById(int id)
+        [ProducesResponseType(200, Type = typeof(Company))]
+        public async Task<IActionResult> GetOneById(int id)
         {
-            return await _companiesRepository.FindByIdAsync(id, "Phones", "Address", "Email");
+            return Ok(await _companiesRepository.FindByIdAsync(id, "Phones", "Address", "Email"));
         }
 
-
-        [HttpGet("search")]
-        public async Task<Company> Get(string cnpj, string companyName, string fantasyName)
-        {
-            var company = await _companiesRepository.FindByAsync(
-                new string[] { "Phones", "Address", "Email" },
-                x => !string.IsNullOrEmpty(cnpj) && x.CNPJ.ToLower().Contains(cnpj.ToLower()),
-                x => !string.IsNullOrEmpty(fantasyName) && x.FantasyName.ToLower().Contains(fantasyName.ToLower()),
-                x => !string.IsNullOrEmpty(companyName) && x.CompanyName.ToLower().Contains(companyName.ToLower()));
-
-            return company;
-        }
 
         [HttpGet]
-        public async Task<List<Company>> Get()
+        [ProducesResponseType(200, Type = typeof(List<Company>))]
+        public async Task<IActionResult> Get([FromQuery] CompanySearchModel search)
         {
-            return (await _companiesRepository.FindManyAsync("Phones", "Address", "Email")).ToList();
+            var companies = await _companiesRepository.FindManyAsync(
+                new string[] { "Phones", "Address", "Email" },
+                search.GetSearchExpressions());
+
+            return Ok(companies);
         }
 
         [HttpPost]
-        public async Task<Company> Create(Company company)
+        [ProducesResponseType(200, Type = typeof(Company))]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Create(Company company)
         {
-            return await _companiesRepository.SaveAsync(company);
+            return Ok(await _companiesRepository.SaveAsync(company));
         }
 
         [HttpPut]
-        public async Task<Company> Update(Company company)
+        [ProducesResponseType(200, Type = typeof(Company))]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Update(Company company)
         {
-            return await _companiesRepository.UpdateAsync(company);
+            return Ok(await _companiesRepository.UpdateAsync(company));
         }
 
         [HttpDelete("{id}")]
-        public async Task<Company> Delete(int id)
+        [ProducesResponseType(200, Type = typeof(Company))]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Delete(int id)
         {
             var company = _companiesRepository.FindByIdAsync(id, "Phones", "Address", "Email").Result;
-            return await _companiesRepository.DeleteAsync(company);
+            if (company == null) return NotFound();
+            return Ok(await _companiesRepository.DeleteAsync(company));
         }
     }
 }

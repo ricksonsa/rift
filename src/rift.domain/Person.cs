@@ -10,9 +10,10 @@ namespace rift.domain
         public string CPF { get; set; }
         [Required]
         public string Name { get; set; }
+        [Required]
+        public string Document { get; set; }
         public string Gender { get; set; }
         public DateTime BirthDate { get; set; }
-        public string Document { get; set; }
         public IList<Email> Emails { get; set; }
         public IList<Phone> Phones { get; set; }
         public Address Address { get; set; }

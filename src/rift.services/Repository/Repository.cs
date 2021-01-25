@@ -176,7 +176,7 @@ namespace rift.services.Repository
             return entity;
         }
 
-        public async Task<T> FindByAsync(string[] includes, params Expression<Func<T, bool>>[] criterias)
+        public async Task<IList<T>> FindManyAsync(string[] includes, params Expression<Func<T, bool>>[] criterias)
         {
             IQueryable<T> entityQuery = _context.Set<T>()
                .AsNoTracking();
@@ -187,10 +187,10 @@ namespace rift.services.Repository
             }
             foreach (var criteria in criterias)
             {
-                var result = await entityQuery.FirstOrDefaultAsync(criteria);
-                if (result != null) return result;
+                var result = entityQuery.Where(criteria);
+                if (result != null && result.Any()) return await result.ToListAsync();
             }
-            return null;
+            return await entityQuery.ToListAsync();
         }
     }
 }
