@@ -187,8 +187,7 @@ namespace rift.services.Repository
             }
             foreach (var criteria in criterias)
             {
-                var result = entityQuery.Where(criteria);
-                if (result != null && result.Any()) return await result.ToListAsync();
+                entityQuery = entityQuery.Where(criteria);
             }
             return await entityQuery.ToListAsync();
         }
